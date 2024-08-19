@@ -4,7 +4,6 @@ import VfNameGenerator from './components/VfNameGenerator.js'; // Make sure the 
 function App() {
   return (
     <div className="App">
-      <h1>Voiceflow Integration</h1>
       <VfNameGenerator />
     </div>
   );

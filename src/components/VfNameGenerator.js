@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import './VfNameGenerator.css'; // Import the CSS file
 
 const VfNameGenerator = () => {
   const [question, setQuestion] = useState('');
@@ -64,7 +65,8 @@ const VfNameGenerator = () => {
 
       for (let i = 0; i < responseData.length; i++) {
         if (responseData[i].type === "text") {
-          reply = responseData[i].payload.message;
+          // Replace $ with <br /> for line breaks
+          reply = responseData[i].payload.message.replace(/\$/g, '<br />');
           break;
         }
       }
@@ -79,8 +81,8 @@ const VfNameGenerator = () => {
   };
 
   return (
-    <div>
-      <h2>VF Name Generator</h2>
+    <div className="vf-container">
+      <h2>Business Name Generator</h2>
       <input
         type="text"
         value={question}
@@ -90,7 +92,12 @@ const VfNameGenerator = () => {
       <button onClick={handleSubmit} disabled={loading}>
         {loading ? 'Loading...' : 'Submit'}
       </button>
-      {response && <p>Response: {response}</p>}
+      {response && (
+        <div
+          className="response-box"
+          dangerouslySetInnerHTML={{ __html: `${response}` }}
+        />
+      )}
     </div>
   );
 };
