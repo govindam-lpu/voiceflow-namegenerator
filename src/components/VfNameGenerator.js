@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -6,6 +6,12 @@ const VfNameGenerator = () => {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
+  const [conversationId, setConversationId] = useState('');
+
+  // Generate a unique conversation ID once per session
+  useEffect(() => {
+    setConversationId(uuidv4());
+  }, []);
 
   const handleInputChange = (event) => {
     setQuestion(event.target.value);
@@ -13,8 +19,6 @@ const VfNameGenerator = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    // const conversationId = uuidv4(); // Generate a unique conversation ID
-    const conversationId = "adfbsbfyuasbfyuwebfyb"; // Generate a unique conversation ID
 
     const token = "Bearer VF.DM.66c03a8bb1a982bcb5022b6f.2ObKBP2ViYX7XC7P";
     const headers = {
@@ -37,6 +41,14 @@ const VfNameGenerator = () => {
     };
 
     try {
+      // First API call to initialize the conversation
+      await axios.post(
+        `https://general-runtime.voiceflow.com/state/user/${conversationId}/interact`,
+        { "action": { "type": "launch" }, "config": { "tts": false, "stripSSML": true, "stopAll": true } },
+        { headers: headers }
+      );
+
+      // Second API call to get the actual response
       const response = await axios.post(
         `https://general-runtime.voiceflow.com/state/user/${conversationId}/interact`,
         requestPayload,
