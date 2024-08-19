@@ -20,11 +20,11 @@ const VfNameGenerator = () => {
   const handleSubmit = async () => {
     setLoading(true);
 
-    const token = "Bearer VF.DM.66c03a8bb1a982bcb5022b6f.2ObKBP2ViYX7XC7P";
+    const token = `Bearer ${process.env.REACT_APP_VOICEFLOW_TOKEN}`;
     const headers = {
       "Authorization": token,
       "Content-Type": "application/json",
-      "versionID": "66befd2af815a151f6122f49"
+      "versionID": process.env.REACT_APP_VOICEFLOW_VERSION_ID
     };
 
     const requestPayload = {
