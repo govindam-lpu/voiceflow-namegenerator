@@ -87,7 +87,7 @@ const VfNameGenerator = () => {
         type="text"
         value={question}
         onChange={handleInputChange}
-        placeholder="Enter your question here"
+        placeholder="Please describe your business"
       />
       <button onClick={handleSubmit} disabled={loading}>
         {loading ? 'Loading...' : 'Submit'}
