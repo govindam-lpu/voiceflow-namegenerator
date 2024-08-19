@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid'; // For generating unique conversation IDs
+import { v4 as uuidv4 } from 'uuid';
 
 const VfNameGenerator = () => {
   const [question, setQuestion] = useState('');
@@ -13,7 +13,8 @@ const VfNameGenerator = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const conversationId = uuidv4(); // Generate a unique conversation ID
+    // const conversationId = uuidv4(); // Generate a unique conversation ID
+    const conversationId = "adfbsbfyuasbfyuwebfyb"; // Generate a unique conversation ID
 
     const token = "Bearer VF.DM.66c03a8bb1a982bcb5022b6f.2ObKBP2ViYX7XC7P";
     const headers = {
@@ -41,6 +42,9 @@ const VfNameGenerator = () => {
         requestPayload,
         { headers: headers }
       );
+
+      // Log the entire response to inspect its structure
+      console.log('Full Response:', response.data);
 
       // Parse the response to find the text message
       const responseData = response.data;
