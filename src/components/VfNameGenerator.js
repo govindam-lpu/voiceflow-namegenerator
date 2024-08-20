@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import './VfNameGenerator.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import "./VfNameGenerator.css";
 
 const VfNameGenerator = () => {
-  const [question, setQuestion] = useState('');
-  const [response, setResponse] = useState('');
+  const [question, setQuestion] = useState("");
+  const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
-  const [conversationId, setConversationId] = useState('');
+  const [conversationId, setConversationId] = useState("");
 
-  // Generate a unique conversation ID once per session
   useEffect(() => {
     setConversationId(uuidv4());
   }, []);
@@ -19,76 +18,94 @@ const VfNameGenerator = () => {
   };
 
   const handleSubmit = async () => {
+    if (!question.trim()) return;
     setLoading(true);
 
     const token = `Bearer ${process.env.REACT_APP_VOICEFLOW_TOKEN}`;
     const headers = {
-      "Authorization": token,
+      Authorization: token,
       "Content-Type": "application/json",
-      "versionID": process.env.REACT_APP_VOICEFLOW_VERSION_ID
+      versionID: process.env.REACT_APP_VOICEFLOW_VERSION_ID,
     };
 
     const requestPayload = {
-      "action": {
-        "type": "text",
-        "payload": question
+      action: {
+        type: "text",
+        payload: question,
       },
-      "config": {
-        "tts": false,
-        "stripSSML": true,
-        "stopAll": true,
-        "excludeTypes": ["block", "debug", "flow"]
-      }
+      config: {
+        tts: false,
+        stripSSML: true,
+        stopAll: true,
+        excludeTypes: ["block", "debug", "flow"],
+      },
     };
 
     try {
-      // First API call to initialize the conversation
       await axios.post(
         `https://general-runtime.voiceflow.com/state/user/${conversationId}/interact`,
-        { "action": { "type": "launch" }, "config": { "tts": false, "stripSSML": true, "stopAll": true } },
+        {
+          action: { type: "launch" },
+          config: { tts: false, stripSSML: true, stopAll: true },
+        },
         { headers: headers }
       );
 
-      // Second API call to get the actual response
       const response = await axios.post(
         `https://general-runtime.voiceflow.com/state/user/${conversationId}/interact`,
         requestPayload,
         { headers: headers }
       );
 
-      // Log the entire response to inspect its structure
-      console.log('Full Response:', response.data);
+      console.log("Full Response:", response.data);
 
-      // Parse the response to find the text message
       const responseData = response.data;
-      let reply = "Sorry, I didn't understand that.";
-
-      // for (let i = 0; i < responseData.length; i++) {
-      //   if (responseData[i].type === "text") {
-      //     // Replace $ with <br /> for line breaks
-      //     reply = responseData[i].payload.message.replace(/\$/g, '<br />');
-      //     break;
-      //   }
-      // }
+      let formattedResponse = "";
 
       for (let i = 0; i < responseData.length; i++) {
         if (responseData[i].type === "text") {
-            // Replace $ with <br /> for line breaks and # with <br /><br /> for headings
-            reply = responseData[i].payload.message
-                .replace(/\#/g, '<h3><br />')  // Adds extra space before each heading
-                .replace(/\:/g, '</h3>')
-                .replace(/\$/g, '<br />');       // Adds line break before each business name
-            break;
-        }
-    }
+          let message = responseData[i].payload.message;
 
-      setResponse(reply);
+          const sections = message
+            .split("#")
+            .filter((section) => section.trim() !== "");
+
+          formattedResponse = sections
+            .map((section) => {
+              const [heading, ...names] = section
+                .split("$")
+                .filter((name) => name.trim() !== "");
+
+              const headingHtml = `<h3><br />${heading.trim()}</h3>`;
+
+              const namesHtml = names
+                .map((name) => {
+                  const trimmedName = name.trim();
+                  const encodedName = trimmedName.replace(/\s+/g, "+");
+                  const domainLink = `https://www.godaddy.com/en-in/domainsearch/find?domainToCheck=${encodedName}`;
+                  return `<br /><a href="${domainLink}" target="_blank">${trimmedName}</a>&nbsp;&nbsp;&nbsp;`;
+                })
+                .join("");
+
+              return headingHtml + namesHtml;
+            })
+            .join("<br /><br />");
+        }
+      }
+
+      setResponse(formattedResponse);
     } catch (error) {
-      console.error('Error interacting with Voiceflow:', error);
+      console.error("Error interacting with Voiceflow:", error);
       setResponse("There was an error processing your request.");
     }
 
     setLoading(false);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSubmit();
+    }
   };
 
   return (
@@ -98,10 +115,11 @@ const VfNameGenerator = () => {
         type="text"
         value={question}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         placeholder="Please describe your business"
       />
       <button onClick={handleSubmit} disabled={loading}>
-        {loading ? 'Loading...' : 'Submit'}
+        {loading ? "Loading..." : "Submit"}
       </button>
       {response && (
         <div

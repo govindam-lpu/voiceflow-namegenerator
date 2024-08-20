@@ -6,9 +6,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100vh;  /* Changed from height: 100vh to min-height */
   margin: 0;
-  flex-direction: column;
+  flex-direction: column; /* Allow content to stack vertically */
 }
 
 /* Style the container */
@@ -16,16 +16,15 @@ body {
   text-align: center;
   width: 100%;
   max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  flex-grow: 1;
+  margin: 20px auto; /* Added top and bottom margin */
+  padding: 20px; /* Added padding for better spacing */
+  flex-grow: 1; /* Allow the container to grow */
 }
 
 /* Style the heading */
 h2 {
   font-size: 2em;
   margin-bottom: 20px;
-  text-transform: uppercase;
 }
 
 /* Style the text box */
@@ -72,7 +71,7 @@ button:disabled {
 .response-box {
   background-color: white;
   color: black;
-  padding: 20px;
+  padding: 20px; /* Added padding for better spacing */
   border-radius: 10px;
   margin-top: 20px;
   font-size: 1em;
@@ -82,54 +81,13 @@ button:disabled {
   margin-left: auto;
   margin-right: auto;
   transition: all 0.3s ease-in-out;
-  line-height: 2;
-  max-height: 1000vh;
-  overflow-y: auto;
+  line-height: 2; /* Add space between lines */
+  max-height: 1000vh; /* Limit height to prevent overflowing */
+  overflow-y: auto; /* Make the box scrollable if content overflows */
 }
 
 .response-box:hover {
   box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3), 0 6px 8px rgba(0, 0, 0, 0.2);
   transform: scale(1.02);
   cursor: pointer;
-}
-
-/* Style the links inside the response box */
-.response-box a {
-  color: black !important;
-  font-weight: bold;
-  text-decoration: none !important;
-  position: relative;
-  display: inline-block;
-  padding-bottom: 2px;
-}
-
-/* Create the underline effect */
-.response-box a::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: black;
-  transform: scaleX(0);
-  transform-origin: bottom right;
-  transition: transform 0.3s ease-out;
-}
-
-/* Add hover effect for links */
-.response-box a:hover::after {
-  transform: scaleX(1);
-  transform-origin: bottom left;
-  transition: transform 0.2s ease-in; /* Faster transition on hover-in */
-}
-
-/* On mouse-out, faster ease-out */
-.response-box a::after {
-  transition: transform 0.1s ease-out; /* Faster transition on hover-out */
-}
-
-/* Make headings in the response box uppercase */
-.response-box h3 {
-  text-transform: uppercase;
 }
