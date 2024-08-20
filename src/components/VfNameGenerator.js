@@ -63,13 +63,24 @@ const VfNameGenerator = () => {
       const responseData = response.data;
       let reply = "Sorry, I didn't understand that.";
 
+      // for (let i = 0; i < responseData.length; i++) {
+      //   if (responseData[i].type === "text") {
+      //     // Replace $ with <br /> for line breaks
+      //     reply = responseData[i].payload.message.replace(/\$/g, '<br />');
+      //     break;
+      //   }
+      // }
+
       for (let i = 0; i < responseData.length; i++) {
         if (responseData[i].type === "text") {
-          // Replace $ with <br /> for line breaks
-          reply = responseData[i].payload.message.replace(/\$/g, '<br />');
-          break;
+            // Replace $ with <br /> for line breaks and # with <br /><br /> for headings
+            reply = responseData[i].payload.message
+                .replace(/\#/g, '<h3><br />')  // Adds extra space before each heading
+                .replace(/\:/g, '</h3>')
+                .replace(/\$/g, '<br />');       // Adds line break before each business name
+            break;
         }
-      }
+    }
 
       setResponse(reply);
     } catch (error) {
