@@ -9,7 +9,13 @@ const VoiceflowChat = () => {
       window.voiceflow.chat.load({
         verify: { projectID: '66befd2af815a151f6122f48' },
         url: 'https://general-runtime.voiceflow.com',
-        versionID: 'development'
+        versionID: 'development',
+        render: {
+          mode: 'embedded',
+          // target: document.getElementById('flat-chat'),
+          target: document.body,
+        },
+        autostart: false
       });
     };
     document.body.appendChild(script);
