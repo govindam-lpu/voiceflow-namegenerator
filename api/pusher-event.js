@@ -15,12 +15,12 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    // Ensure we handle the JSON parsing safely
+    // Manually parse the JSON body
     let body;
     try {
-      body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      body = await req.json();
     } catch (error) {
-      console.error('Invalid JSON format:', req.body);
+      console.error('Error parsing JSON:', error);
       return res.status(400).json({ message: 'Invalid JSON format' });
     }
 
