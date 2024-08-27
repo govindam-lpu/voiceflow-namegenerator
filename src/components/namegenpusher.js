@@ -1,38 +1,34 @@
+import React, { useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 
-const pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID,
-  key: process.env.PUSHER_APP_KEY,
-  secret: process.env.PUSHER_APP_SECRET,
-  cluster: process.env.PUSHER_CLUSTER,
-  useTLS: true,
-});
+const NameGenPusher = () => {
+  const [name, setName] = useState('');
 
-export default function handler(req, res) {
-  try {
-    if (req.method !== 'POST') {
-      console.log('Invalid method:', req.method);
-      return res.status(405).json({ message: 'Method not allowed' });
-    }
+  useEffect(() => {
+    // Initialize Pusher
+    const pusher = new Pusher('b3e4cdb43addf0483109', {
+      cluster: 'ap2'
+    });
 
-    const { message } = req.body;
+    // Subscribe to the channel and event
+    const channel = pusher.subscribe('name-channel');
+    channel.bind('name-generated', function (data) {
+      setName(data.name); // Set the incoming name data to state
+    });
 
-    if (!message) {
-      console.log('No message provided in request body:', req.body);
-      return res.status(400).json({ message: 'Bad request, no message provided' });
-    }
+    // Clean up on component unmount
+    return () => {
+      channel.unbind('name-generated');
+      pusher.unsubscribe('name-channel');
+    };
+  }, []);
 
-    pusher.trigger('my-channel', 'my-event', { message: message })
-      .then(() => {
-        res.status(200).json({ message: 'Event triggered successfully' });
-      })
-      .catch((error) => {
-        console.error('Error triggering Pusher event:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-      });
+  return (
+    <div>
+      <h2>Real-Time Name Generator</h2>
+      <p>Generated Name: {name}</p>
+    </div>
+  );
+};
 
-  } catch (error) {
-    console.error('Unexpected error:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-}
+export default NameGenPusher;
