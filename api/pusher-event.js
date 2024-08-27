@@ -15,12 +15,12 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    // Manually parse the JSON body
+    // Use the built-in Vercel parsing method to manually parse JSON
     let body;
     try {
-      body = await req.json();
+      body = JSON.parse(req.body);
     } catch (error) {
-      console.error('Error parsing JSON:', error);
+      console.error('Error parsing JSON:', error, 'Received body:', req.body);
       return res.status(400).json({ message: 'Invalid JSON format' });
     }
 
