@@ -1,4 +1,4 @@
-import Pusher from 'pusher';
+import Pusher from 'pusher-js';
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,

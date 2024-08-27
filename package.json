@@ -7,7 +7,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.4",
-    "pusher": "^5.2.0",
     "pusher-js": "^8.4.0-rc2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
