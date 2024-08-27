@@ -7,15 +7,15 @@ const VoiceflowChat = () => {
     script.type = "text/javascript";
     script.onload = () => {
       window.voiceflow.chat.load({
-        verify: { projectID: '66befd2af815a151f6122f48' },
+        verify: { projectID: '66cd6015e166995d728b65f7' },
         url: 'https://general-runtime.voiceflow.com',
         versionID: 'development',
-        render: {
-          mode: 'embedded',
-          // target: document.getElementById('flat-chat'),
-          target: document.body,
-        },
-        autostart: false
+        // render: {
+        //   mode: 'embedded',
+        //   // target: document.getElementById('flat-chat'),
+        //   target: document.body,
+        // },
+        // autostart: false
       });
     };
     document.body.appendChild(script);
