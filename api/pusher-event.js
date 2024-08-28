@@ -47,21 +47,10 @@
 
 
 // This variable will temporarily store the data
-import admin from 'firebase-admin';
+import { URLSearchParams } from 'url';
 
-// Initialize Firebase Admin SDK
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    }),
-  });
-}
-
-const db = admin.firestore();
-const messageDoc = db.collection('messages').doc('latest');
+// Temporary in-memory storage
+let latestMessage = '';
 
 export default async function handler(req, res) {
   try {
@@ -90,21 +79,20 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Bad request, no message provided' });
       }
 
-      // Write the latest message to Firestore
-      await messageDoc.set({ message });
+      // Store the latest message in memory
+      latestMessage = message;
 
       return res.status(200).json({ message: 'Data received successfully' });
 
     } else if (req.method === 'GET') {
-      // Read the latest message from Firestore
-      const doc = await messageDoc.get();
-      if (!doc.exists) {
+      // Return the latest message from memory
+      if (!latestMessage) {
         console.log('No data available for GET request');
         return res.status(404).json({ message: 'No data available' });
       }
 
-      console.log('Serving data for GET request:', doc.data().message);
-      return res.status(200).json({ message: doc.data().message });
+      console.log('Serving data for GET request:', latestMessage);
+      return res.status(200).json({ message: latestMessage });
     } else {
       console.log('Invalid method:', req.method);
       return res.status(405).json({ message: 'Method not allowed' });
@@ -114,4 +102,3 @@ export default async function handler(req, res) {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
-
