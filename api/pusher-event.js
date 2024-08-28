@@ -47,46 +47,29 @@
 
 
 // This variable will temporarily store the data
-import fs from 'fs';
-import path from 'path';
+import { URLSearchParams } from 'url';
 
-// Path to the JSON file
-const filePath = path.resolve('.', 'latestMessage.json');
-
-// Helper function to read the latest message from the file
-const readLatestMessage = () => {
-  try {
-    if (fs.existsSync(filePath)) {
-      const data = fs.readFileSync(filePath, 'utf8');
-      return JSON.parse(data).message;
-    }
-  } catch (error) {
-    console.error('Error reading the latest message:', error);
-  }
-  return '';
-};
-
-// Helper function to write the latest message to the file
-const writeLatestMessage = (message) => {
-  try {
-    fs.writeFileSync(filePath, JSON.stringify({ message }), 'utf8');
-  } catch (error) {
-    console.error('Error writing the latest message:', error);
-  }
-};
+// Temporary in-memory storage
+let latestMessage = '';
 
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
       let body;
       try {
-        body = req.body;
-        if (typeof body === 'string') {
-          body = JSON.parse(body);
+        if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
+          // Parse x-www-form-urlencoded data
+          body = Object.fromEntries(new URLSearchParams(req.body));
+        } else {
+          // Fallback to JSON parsing
+          body = req.body;
+          if (typeof body === 'string') {
+            body = JSON.parse(body);
+          }
         }
       } catch (error) {
-        console.error('Error parsing JSON:', error, 'Received body:', req.body);
-        return res.status(400).json({ message: 'Invalid JSON format' });
+        console.error('Error parsing request:', error, 'Received body:', req.body);
+        return res.status(400).json({ message: 'Invalid request format' });
       }
 
       const { message } = body;
@@ -96,15 +79,13 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Bad request, no message provided' });
       }
 
-      // Write the latest message to the file
-      writeLatestMessage(message);
+      // Store the latest message in memory
+      latestMessage = message;
 
       return res.status(200).json({ message: 'Data received successfully' });
 
     } else if (req.method === 'GET') {
-      // Read the latest message from the file
-      const latestMessage = readLatestMessage();
-
+      // Return the latest message from memory
       if (!latestMessage) {
         console.log('No data available for GET request');
         return res.status(404).json({ message: 'No data available' });
