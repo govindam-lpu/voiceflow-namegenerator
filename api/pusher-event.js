@@ -52,13 +52,10 @@ let latestMessage = '';
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
-      // Handle incoming data from Make.com or Postman
+      // Handle incoming data from Make.com
       let body;
       try {
-        // Vercel functions use req.body directly if sent as JSON
         body = req.body;
-        
-        // Check if body is already an object; otherwise parse it
         if (typeof body === 'string') {
           body = JSON.parse(body);
         }
@@ -74,7 +71,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Bad request, no message provided' });
       }
 
-      // Store the latest message (if using memory storage)
+      // Store the latest message
       latestMessage = message;
 
       return res.status(200).json({ message: 'Data received successfully' });
@@ -82,9 +79,11 @@ export default async function handler(req, res) {
     } else if (req.method === 'GET') {
       // Serve the stored data to React app
       if (!latestMessage) {
+        console.log('No data available for GET request');
         return res.status(404).json({ message: 'No data available' });
       }
 
+      console.log('Serving data for GET request:', latestMessage);
       return res.status(200).json({ message: latestMessage });
     } else {
       console.log('Invalid method:', req.method);
@@ -95,3 +94,4 @@ export default async function handler(req, res) {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+
