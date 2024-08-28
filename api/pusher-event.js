@@ -47,12 +47,37 @@
 
 
 // This variable will temporarily store the data
-let latestMessage = '';
+import fs from 'fs';
+import path from 'path';
+
+// Path to the JSON file
+const filePath = path.resolve('.', 'latestMessage.json');
+
+// Helper function to read the latest message from the file
+const readLatestMessage = () => {
+  try {
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(data).message;
+    }
+  } catch (error) {
+    console.error('Error reading the latest message:', error);
+  }
+  return '';
+};
+
+// Helper function to write the latest message to the file
+const writeLatestMessage = (message) => {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify({ message }), 'utf8');
+  } catch (error) {
+    console.error('Error writing the latest message:', error);
+  }
+};
 
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
-      // Handle incoming data from Make.com
       let body;
       try {
         body = req.body;
@@ -71,13 +96,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Bad request, no message provided' });
       }
 
-      // Store the latest message
-      latestMessage = message;
+      // Write the latest message to the file
+      writeLatestMessage(message);
 
       return res.status(200).json({ message: 'Data received successfully' });
 
     } else if (req.method === 'GET') {
-      // Serve the stored data to React app
+      // Read the latest message from the file
+      const latestMessage = readLatestMessage();
+
       if (!latestMessage) {
         console.log('No data available for GET request');
         return res.status(404).json({ message: 'No data available' });
@@ -94,4 +121,3 @@ export default async function handler(req, res) {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
-
