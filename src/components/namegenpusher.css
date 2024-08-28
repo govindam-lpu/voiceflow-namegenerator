@@ -1,0 +1,100 @@
+/* Center everything in the body */
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Proxima Nova', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    flex-direction: column;
+  }
+  
+  /* Style the container */
+  .vf-container {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    flex-grow: 1;
+  }
+  
+  /* Style the heading */
+  h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  
+  /* Style the response box */
+  .response-box {
+    background-color: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-size: 1em;
+    text-align: center;
+    box-shadow: inset 0 0 10px rgb(0, 0, 0), 0 4px 6px rgb(0, 0, 0);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: all 0.3s ease-in-out;
+    line-height: 2;
+    max-height: 1000vh;
+    overflow-y: auto;
+  }
+  
+  .response-box:hover {
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3), 0 6px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.02);
+    cursor: pointer;
+  }
+  
+  /* Style the links inside the response box */
+  .response-box a {
+    color: black !important;
+    font-weight: bold;
+    text-decoration: none !important;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 2px;
+  }
+  
+  /* Create the underline effect */
+  .response-box a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: black;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+  }
+  
+  /* Add hover effect for links */
+  .response-box a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+    transition: transform 0.2s ease-in; /* Faster transition on hover-in */
+  }
+  
+  /* On mouse-out, faster ease-out */
+  .response-box a::after {
+    transition: transform 0.1s ease-out; /* Faster transition on hover-out */
+  }
+  
+  /* Make headings in the response box uppercase */
+  .response-box h3 {
+    text-transform: uppercase;
+    color: black;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  

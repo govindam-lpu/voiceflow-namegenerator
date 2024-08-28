@@ -34,6 +34,7 @@
 // export default NameGenPusher;
 
 import React, { useEffect, useState } from 'react';
+import "./namegenpusher.css";
 
 const NameGenPusher = () => {
   const [content, setContent] = useState(''); // State to hold content as HTML
@@ -53,7 +54,7 @@ const NameGenPusher = () => {
         setContent(htmlContent); // Set the converted HTML content to state
       } catch (error) {
         console.error('Error fetching content:', error);
-        setError('Failed to fetch data');
+        setError('Describe your Business to the Chatbot');
       }
     };
 
@@ -78,15 +79,16 @@ const NameGenPusher = () => {
   };
 
   return (
-    <div>
+    <div className="vf-container">
       <h2>Generated Name</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'cyan' }}>{error}</p>}
       {/* Render the dynamic HTML content */}
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <div className="response-box" dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   );
 };
 
 export default NameGenPusher;
+
 
 
