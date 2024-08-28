@@ -39,15 +39,15 @@ const NameGenPusher = () => {
   const [name, setName] = useState('');
 
   useEffect(() => {
-    // Fetch data from Vercel function
+    // Fetch data from the Vercel function on component mount
     const fetchName = async () => {
       try {
         const response = await fetch('https://voiceflow-namegenerator.vercel.app/api/pusher-event');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const data = await response.json();
-        setName(data.name);
+        const data = await response.json(); 
+        setName(data.message); // Set the fetched name to state
       } catch (error) {
         console.error('Error fetching name:', error);
       }
@@ -65,3 +65,4 @@ const NameGenPusher = () => {
 };
 
 export default NameGenPusher;
+
