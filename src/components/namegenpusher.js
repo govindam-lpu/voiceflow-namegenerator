@@ -36,46 +36,57 @@
 import React, { useEffect, useState } from 'react';
 
 const NameGenPusher = () => {
-  const [htmlContent, setHtmlContent] = useState(''); // State to hold HTML content
+  const [content, setContent] = useState(''); // State to hold content as HTML
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Function to fetch HTML content from the Vercel function
-    const fetchHtmlContent = async () => {
+    // Function to fetch content from the Vercel function
+    const fetchContent = async () => {
       try {
         const response = await fetch('https://voiceflow-namegenerator.vercel.app/api/pusher-event'); // Update with your actual server URL
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.statusText}`);
         }
-        const data = await response.text(); // Fetching response as text to handle HTML
-        setHtmlContent(data); // Set the fetched HTML content to state
+        const data = await response.json(); // Fetch response as JSON
+        const markdownContent = data.message; // Extract message from JSON
+        const htmlContent = convertMarkdownToHTML(markdownContent); // Convert markdown to HTML
+        setContent(htmlContent); // Set the converted HTML content to state
       } catch (error) {
-        console.error('Error fetching HTML content:', error);
+        console.error('Error fetching content:', error);
         setError('Failed to fetch data');
       }
     };
 
     // Initial fetch
-    fetchHtmlContent();
+    fetchContent();
 
     // Set up polling every 5 seconds
     const intervalId = setInterval(() => {
-      fetchHtmlContent();
+      fetchContent();
     }, 5000);
 
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
+  // Function to convert markdown to HTML
+  const convertMarkdownToHTML = (markdown) => {
+    return markdown
+      .replace(/### (.*?)\n/g, '<h3>$1</h3>') // Convert markdown headers
+      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>') // Convert markdown links
+      .replace(/\n/g, '<br>'); // Convert newlines to <br>
+  };
+
   return (
     <div>
       <h2>Generated Name</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {/* Render the dynamic HTML content */}
-      <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      <div dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   );
 };
 
 export default NameGenPusher;
+
 
