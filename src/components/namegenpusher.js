@@ -37,9 +37,10 @@ import React, { useEffect, useState } from 'react';
 
 const NameGenPusher = () => {
   const [name, setName] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch data from the Vercel function on component mount
+    // Function to fetch data from the Vercel function
     const fetchName = async () => {
       try {
         const response = await fetch('https://voiceflow-namegenerator.vercel.app/api/pusher-event');
@@ -47,23 +48,32 @@ const NameGenPusher = () => {
           throw new Error(`Network response was not ok: ${response.statusText}`);
         }
         const data = await response.json();
-        setName(data.message); // Set the fetched name to state
+        setName(data.message);
       } catch (error) {
         console.error('Error fetching name:', error);
+        setError('Failed to fetch data');
       }
     };
 
+    // Initial fetch
     fetchName();
+
+    // Set up polling every 5 seconds
+    const intervalId = setInterval(() => {
+      fetchName();
+    }, 5000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
     <div>
       <h2>Generated Name</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <p>{name ? `Name: ${name}` : 'No name generated yet'}</p>
     </div>
   );
 };
 
 export default NameGenPusher;
-
-
