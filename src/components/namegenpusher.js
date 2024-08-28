@@ -36,31 +36,31 @@
 import React, { useEffect, useState } from 'react';
 
 const NameGenPusher = () => {
-  const [name, setName] = useState('');
+  const [htmlContent, setHtmlContent] = useState(''); // State to hold HTML content
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Function to fetch data from the Vercel function
-    const fetchName = async () => {
+    // Function to fetch HTML content from the Vercel function
+    const fetchHtmlContent = async () => {
       try {
-        const response = await fetch('https://voiceflow-namegenerator.vercel.app/api/pusher-event');
+        const response = await fetch('https://voiceflow-namegenerator.vercel.app/api/pusher-event'); // Update with your actual server URL
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.statusText}`);
         }
-        const data = await response.json();
-        setName(data.message);
+        const data = await response.text(); // Fetching response as text to handle HTML
+        setHtmlContent(data); // Set the fetched HTML content to state
       } catch (error) {
-        console.error('Error fetching name:', error);
+        console.error('Error fetching HTML content:', error);
         setError('Failed to fetch data');
       }
     };
 
     // Initial fetch
-    fetchName();
+    fetchHtmlContent();
 
     // Set up polling every 5 seconds
     const intervalId = setInterval(() => {
-      fetchName();
+      fetchHtmlContent();
     }, 5000);
 
     // Clean up interval on component unmount
@@ -71,9 +71,11 @@ const NameGenPusher = () => {
     <div>
       <h2>Generated Name</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <p>{name ? `Name: ${name}` : 'No name generated yet'}</p>
+      {/* Render the dynamic HTML content */}
+      <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
     </div>
   );
 };
 
 export default NameGenPusher;
+
