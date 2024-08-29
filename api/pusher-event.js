@@ -54,7 +54,7 @@ let latestMessage = '';
 
 export default async function handler(req, res) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', 'https://mridangamedia.com');
+  res.setHeader('Access-Control-Allow-Origin', 'https://thenameexperts.com/');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
